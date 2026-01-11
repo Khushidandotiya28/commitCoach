@@ -3,6 +3,7 @@ import cors from "cors";
 
 import healthRoute from "./routes/health.routes.js";
 import repoRoutes from "./routes/repo.routes.js";
+import errorMiddleware from "./middlewares/errorMiddleware.js";
 
 const app = express();
 
@@ -11,5 +12,9 @@ app.use(express.json());
 
 app.use("/api/health", healthRoute);
 app.use("/api/repo", repoRoutes);
+
+
+app.use(errorMiddleware);
+
 
 export default app;
