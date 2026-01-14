@@ -15,7 +15,7 @@ const repoAnalysisSchema = new mongoose.Schema(
     repoUrl: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // creates unique index automatically
     },
     owner: String,
     repoName: String,
@@ -32,8 +32,18 @@ const repoAnalysisSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+
+    avgCommitsPerDay: Number,
+    maxGapDays: Number,
+    busFactor: Number,
+
+    repoHealth: String,
+    technicalDebt: String,
+    risks: [String],
   },
   { timestamps: true }
 );
+
+
 
 export default mongoose.model("RepoAnalysis", repoAnalysisSchema);

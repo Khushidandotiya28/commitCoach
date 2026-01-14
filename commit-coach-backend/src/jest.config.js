@@ -4,3 +4,5 @@ export default {
   extensionsToTreatAsEsm: [".js"],
   transform: {}
 };
+
+await jest.mock("../services/aiAnalysis.service.js");

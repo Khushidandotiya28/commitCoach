@@ -21,6 +21,15 @@ await jest.unstable_mockModule(
   })
 );
 
+await jest.unstable_mockModule("../services/aiAnalysis.service.js", () => ({
+  analyzeRepoWithAI: jest.fn().mockResolvedValue({
+    commitScore: "High",
+    aiSuggestions: ["Improve test coverage"],
+  }),
+}));
+
+
+
 // ✅ Import app AFTER mocks
 const { default: app } = await import("../app.js");
 
