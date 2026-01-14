@@ -1,4 +1,4 @@
-// controllers/analyzeRepo.controller.js
+
 import RepoAnalysis from "../models/RepoAnalysis.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { fetchAllCommits } from "../services/githubService.js";
@@ -61,7 +61,7 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     { new: true, upsert: true }
   );
 
-  // ---------- AI INTERPRETATION (DAY 8) ----------
+  // ---------- AI INTERPRETATION ----------
   let aiResult = null;
 
   try {
