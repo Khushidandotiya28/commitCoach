@@ -30,7 +30,6 @@ const RepoStatsCard = ({ repo }) => (
       <p>
         <span className="font-medium">Risks:</span>{" "}
         <span className="text-red-600">
-          {/* Safe check for risks array before joining */}
           {repo?.risks?.length > 0 ? repo.risks.join(", ") : "None detected"}
         </span>
       </p>

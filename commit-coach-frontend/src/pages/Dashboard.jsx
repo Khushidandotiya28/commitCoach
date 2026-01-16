@@ -24,7 +24,7 @@ const Dashboard = () => {
     }
   };
 
-  // 2️⃣ Handle repo analysis
+  // Handle repo analysis
   const handleAnalyze = async (repoUrl) => {
     setLoading(true);
     try {
@@ -39,12 +39,12 @@ const Dashboard = () => {
     }
   };
 
-  // 3️⃣ Navigate to detailed analytics page
+  // Navigate to detailed analytics page
   const handleCardClick = (repoId) => {
     navigate(`/analytics/${repoId}`);
   };
 
-  // 4️⃣ Fetch repos on mount or token change
+  // Fetch repos on mount or token change
   useEffect(() => {
     fetchRepos();
   }, [token]);
