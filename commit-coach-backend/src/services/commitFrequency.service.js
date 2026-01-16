@@ -1,5 +1,5 @@
 function getDateOnly(isoDate) {
-  return isoDate.split("T")[0]; // YYYY-MM-DD
+  return isoDate.split("T")[0]; 
 }
 
 function groupCommitsByDay(commits) {

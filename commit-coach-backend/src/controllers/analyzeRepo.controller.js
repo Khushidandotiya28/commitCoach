@@ -10,10 +10,10 @@ const analyzeRepo = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { owner, repo } = req.repo;
 
-  // 1️⃣ Fetch commits
+  // Fetch commits
   const commits = await fetchAllCommits(owner, repo);
 
-  // 2️⃣ Contributors
+  // Contributors
   const contributorsMap = {};
   commits.forEach((commit) => {
     const name = commit.commit.author.name;
@@ -24,7 +24,7 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     ([name, commits]) => ({ name, commits })
   );
 
-  // 3️⃣ Commit stats
+  // Commit stats
   const commitStatsMap = {};
   commits.forEach((commit) => {
     const date = commit.commit.author.date.slice(0, 10);
@@ -35,13 +35,13 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     ([date, count]) => ({ date, count })
   );
 
-  // 4️⃣ Metrics
+  // Metrics
   const metrics = calculateRepoMetrics(commits, contributors);
 
-  // 5️⃣ Health
+  // Health
   const healthReport = evaluateRepoHealth(metrics);
 
-  // 6️⃣ Save analysis
+  // Save analysis
   const analysis = await RepoAnalysis.findOneAndUpdate(
     { repoUrl, userId },
     {
@@ -66,7 +66,7 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     { new: true, upsert: true }
   );
 
-  // 7️⃣ AI Interpretation (SAFE)
+  // AI Interpretation 
   let aiInsights = null;
 
   try {
@@ -76,7 +76,7 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     aiInsights = "AI analysis temporarily unavailable";
   }
 
-  // 8️⃣ SINGLE RESPONSE ✅
+  // SINGLE RESPONSE 
   res.status(200).json({
     status: "success",
     data: analysis,

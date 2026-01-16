@@ -6,7 +6,7 @@ const GITHUB_API = "https://api.github.com";
 export const fetchAllCommits = async (owner, repo) => {
   const cacheKey = `commits:${owner}/${repo}`;
 
-  // 1️⃣ Check cache first
+  // Check cache first
   const cachedCommits = getCache(cacheKey);
   if (cachedCommits) {
     return cachedCommits;
@@ -37,7 +37,7 @@ export const fetchAllCommits = async (owner, repo) => {
     page++;
   }
 
-  // 2️⃣ Store in cache
+  // Store in cache
   setCache(cacheKey, allCommits);
 
   return allCommits;

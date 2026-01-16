@@ -37,7 +37,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-    // ✅ FIXED: Return user object so the context can store name/email
+    //Return user object so the context can store name/email
     res.status(200).json({
       message: "Login successful",
       user: {

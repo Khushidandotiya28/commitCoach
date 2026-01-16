@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import request from "supertest";
 
-// ✅ Mock middleware FIRST
+//Mock middleware
 await jest.unstable_mockModule(
   "../middlewares/validateRepoUrl.js",
   () => ({
@@ -9,7 +9,7 @@ await jest.unstable_mockModule(
   })
 );
 
-// ✅ Mock controller
+//Mock controller
 await jest.unstable_mockModule(
   "../controllers/analyzeRepo.controller.js",
   () => ({
@@ -30,7 +30,7 @@ await jest.unstable_mockModule("../services/aiAnalysis.service.js", () => ({
 
 
 
-// ✅ Import app AFTER mocks
+//Import app 
 const { default: app } = await import("../app.js");
 
 describe("Repo API Integration Test", () => {
