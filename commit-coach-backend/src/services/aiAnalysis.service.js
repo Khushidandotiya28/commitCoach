@@ -1,31 +1,35 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from "dotenv";
 
-export const analyzeRepoWithAI = async (stats) => {
-  // ✅ Guard clause (very important)
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OpenAI API key not configured");
-  }
+dotenv.config();
 
-  // ✅ Create client INSIDE function
-  const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  const prompt = `
-Analyze this GitHub repository:
+export const analyzeRepoWithGemini = async (repoAnalysis) => {
+  try {
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+    }, { apiVersion: 'v1' });
 
-Total commits: ${stats.totalCommits}
-Contributors: ${stats.contributorsCount}
+    const prompt = `
+You are a senior software architect.
 
-Return JSON with:
-- commitScore (Low | Medium | High)
-- aiSuggestions (array)
+Analyze the following GitHub repository data and provide:
+1. Overall health summary
+2. Technical debt assessment
+3. Key risks
+4. Actionable recommendations
+
+Repository Data:
+${JSON.stringify(repoAnalysis, null, 2)}
 `;
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: prompt }],
-  });
+    const result = await model.generateContent(prompt);
 
-  return JSON.parse(response.choices[0].message.content);
+    return result.response.text();
+
+  } catch (error) {
+    console.error("Gemini AI error:", error.message);
+    throw error;
+  }
 };

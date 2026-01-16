@@ -11,11 +11,17 @@ const commitStatsSchema = new mongoose.Schema({
 });
 
 const repoAnalysisSchema = new mongoose.Schema(
-  {
+  {  
+    userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+    },
+
     repoUrl: {
       type: String,
       required: true,
-      unique: true, // creates unique index automatically
+      //unique: true, 
     },
     owner: String,
     repoName: String,
@@ -41,9 +47,11 @@ const repoAnalysisSchema = new mongoose.Schema(
     technicalDebt: String,
     risks: [String],
   },
-  { timestamps: true }
+
+  { timestamps: true },
 );
-
-
-
+  repoAnalysisSchema.index(
+  { userId: 1, repoUrl: 1 },
+  { unique: true }
+  )
 export default mongoose.model("RepoAnalysis", repoAnalysisSchema);

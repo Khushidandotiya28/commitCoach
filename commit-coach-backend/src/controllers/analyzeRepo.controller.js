@@ -1,23 +1,19 @@
-
 import RepoAnalysis from "../models/RepoAnalysis.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { fetchAllCommits } from "../services/githubService.js";
-import { analyzeRepoWithAI } from "../services/aiAnalysis.service.js";
+import { analyzeRepoWithGemini } from "../services/aiAnalysis.service.js";
 import { calculateRepoMetrics } from "../utils/repoMetrics.js";
 import { evaluateRepoHealth } from "../utils/repoHealth.js";
 
 const analyzeRepo = asyncHandler(async (req, res) => {
   const { repoUrl } = req.body;
+  const userId = req.user._id;
   const { owner, repo } = req.repo;
 
-
-  const metrics = calculateRepoMetrics(commits, contributors);
-  const healthReport = evaluateRepoHealth(metrics);
-
-
+  // 1️⃣ Fetch commits
   const commits = await fetchAllCommits(owner, repo);
 
-  // ---- existing stats logic ----
+  // 2️⃣ Contributors
   const contributorsMap = {};
   commits.forEach((commit) => {
     const name = commit.commit.author.name;
@@ -28,6 +24,7 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     ([name, commits]) => ({ name, commits })
   );
 
+  // 3️⃣ Commit stats
   const commitStatsMap = {};
   commits.forEach((commit) => {
     const date = commit.commit.author.date.slice(0, 10);
@@ -38,9 +35,17 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     ([date, count]) => ({ date, count })
   );
 
+  // 4️⃣ Metrics
+  const metrics = calculateRepoMetrics(commits, contributors);
+
+  // 5️⃣ Health
+  const healthReport = evaluateRepoHealth(metrics);
+
+  // 6️⃣ Save analysis
   const analysis = await RepoAnalysis.findOneAndUpdate(
-    { repoUrl },
+    { repoUrl, userId },
     {
+      userId,
       repoUrl,
       owner,
       repoName: repo,
@@ -61,26 +66,21 @@ const analyzeRepo = asyncHandler(async (req, res) => {
     { new: true, upsert: true }
   );
 
-  // ---------- AI INTERPRETATION ----------
-  let aiResult = null;
+  // 7️⃣ AI Interpretation (SAFE)
+  let aiInsights = null;
 
   try {
-    aiResult = await analyzeRepoWithAI({
-      totalCommits: analysis.totalCommits,
-      contributorsCount: analysis.contributors.length,
-      commitStats: analysis.commitStats,
-    });
-  } catch (err) {
-    console.error("AI analysis failed:", err.message);
+    aiInsights = await analyzeRepoWithGemini(analysis.toObject());
+  } catch (error) {
+    console.error("AI analysis failed:", error.message);
+    aiInsights = "AI analysis temporarily unavailable";
   }
 
-  // ---------- RESPONSE ----------
+  // 8️⃣ SINGLE RESPONSE ✅
   res.status(200).json({
     status: "success",
     data: analysis,
-    aiInsights: aiResult || {
-      message: "AI analysis unavailable",
-    },
+    aiInsights,
   });
 });
 
