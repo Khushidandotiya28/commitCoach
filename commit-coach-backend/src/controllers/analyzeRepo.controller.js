@@ -5,7 +5,7 @@ import { analyzeRepoWithGemini } from "../services/aiAnalysis.service.js";
 import { calculateRepoMetrics } from "../utils/repoMetrics.js";
 import { evaluateRepoHealth } from "../utils/repoHealth.js";
 
-const analyzeRepo = asyncHandler(async (req, res) => {
+export const analyzeRepo = asyncHandler(async (req, res) => {
   const { repoUrl } = req.body;
   const userId = req.user._id;
   const { owner, repo } = req.repo;
@@ -84,4 +84,23 @@ const analyzeRepo = asyncHandler(async (req, res) => {
   });
 });
 
-export default analyzeRepo;
+export const deleteRepo = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  const repo = await RepoAnalysis.findOne({ _id: id, userId });
+
+  if (!repo) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Analysis not found or you do not have permission to delete it.",
+    });
+  }
+
+  await RepoAnalysis.findByIdAndDelete(id);
+
+  res.status(200).json({
+    status: "success",
+    message: "Repository analysis deleted successfully.",
+  });
+});

@@ -19,3 +19,9 @@ export const analyzeRepo = (repoUrl, token) =>
 
 export const getRepoHistory = (token) =>
   api.get("/repo/history", { headers: { Authorization: `Bearer ${token}` } });
+
+export const deleteRepo = async (repoId, token) => {
+  return await api.delete(`/repo/${repoId}`, { 
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
